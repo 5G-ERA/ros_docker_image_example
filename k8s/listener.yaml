@@ -48,7 +48,7 @@ spec:
                 echo "Could not load ros setup"
                 exit 1
               fi
-              source /root/catkin_ws/devel/setup.bash
+              source /catkin_ws/devel/setup.bash
               if ! [ $? -eq 0 ]; then
                 echo "Could not load ros ws"
                 exit 1
