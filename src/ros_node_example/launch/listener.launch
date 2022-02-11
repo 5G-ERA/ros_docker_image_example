@@ -1,0 +1,8 @@
+<launch>
+  <node
+    name="listener"
+    pkg="ros_node_example"
+    type="listener.py"
+    output="screen"
+  />
+</launch>

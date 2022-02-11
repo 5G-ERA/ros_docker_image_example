@@ -1,0 +1,56 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: listener
+  labels:
+    app: listener-pod
+    group: test-group
+    robotType: simulated
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listener-pod
+      group: test-group
+      name: listener
+      robotType: simulated
+  template:
+    metadata:
+      labels:
+        app: listener-pod
+        group: test-group
+        name: listener
+        robotType: simulated
+    spec:
+      containers:
+        - name: listener-container
+          imagePullPolicy: Always
+          image: >-
+            394603622351.dkr.ecr.eu-central-1.amazonaws.com/robotic-workshop-01:ros-example-test
+          env:
+            - name: ROS_MASTER_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: robots-common-env-configmap
+                  key: master.uri.ros
+            - name: ROS_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          command:
+            - /bin/bash
+            - '-c'
+          args:
+            - |
+              source /opt/ros/melodic/setup.bash
+              if ! [ $? -eq 0 ]; then
+                echo "Could not load ros setup"
+                exit 1
+              fi
+              source /root/catkin_ws/devel/setup.bash
+              if ! [ $? -eq 0 ]; then
+                echo "Could not load ros ws"
+                exit 1
+              fi
+              roslaunch ros_node_example listener.launch
